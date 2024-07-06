@@ -65,6 +65,14 @@ function Metronome({ onTick }: MetronomeProps) {
     if (audioContext) audioContext.close();
   });
 
+  function onButtonClick() {
+    if (isRunning()) {
+      stop();
+    } else {
+      start();
+    }
+  }
+
   return (
     <div>
       <input
@@ -77,8 +85,7 @@ function Metronome({ onTick }: MetronomeProps) {
         }}
         style={{ "font-size": "1.5em", margin: "10px", padding: "5px" }}
       />
-      <button onClick={start}>Start</button>
-      <button onClick={stop}>Stop</button>
+      <button onClick={onButtonClick}>{isRunning() ? "Stop" : "Start"}</button>
     </div>
   );
 }
