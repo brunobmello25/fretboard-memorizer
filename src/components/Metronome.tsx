@@ -3,9 +3,10 @@ import { createSignal, onCleanup } from "solid-js";
 interface MetronomeProps {
   bpm: number;
   onTick: () => void;
+  onBpmChange: (bpm: number) => void;
 }
 
-function Metronome({ bpm, onTick }: MetronomeProps) {
+function Metronome({ bpm, onTick, onBpmChange }: MetronomeProps) {
   const [isRunning, setIsRunning] = createSignal(false);
   let intervalId: NodeJS.Timeout;
 
@@ -15,19 +16,19 @@ function Metronome({ bpm, onTick }: MetronomeProps) {
     const oscillator = context.createOscillator();
     const gainNode = context.createGain();
 
-    oscillator.type = "square"; // Use square wave for a clicky sound
-    oscillator.frequency.setValueAtTime(1000, context.currentTime); // Frequency for the click sound
+    oscillator.type = "square";
+    oscillator.frequency.setValueAtTime(1000, context.currentTime);
     gainNode.gain.setValueAtTime(1, context.currentTime);
     gainNode.gain.exponentialRampToValueAtTime(
       0.0001,
       context.currentTime + 0.05,
-    ); // Short duration
+    );
 
     oscillator.connect(gainNode);
     gainNode.connect(context.destination);
 
     oscillator.start();
-    oscillator.stop(context.currentTime + 0.05); // Play beep for 0.05 seconds
+    oscillator.stop(context.currentTime + 0.05);
   };
 
   const start = () => {
@@ -54,6 +55,12 @@ function Metronome({ bpm, onTick }: MetronomeProps) {
 
   return (
     <div>
+      <input
+        type="number"
+        value={bpm}
+        onInput={(e) => onBpmChange(parseInt(e.currentTarget.value))}
+        style={{ "font-size": "1.5em", margin: "10px", padding: "5px" }}
+      />
       <button onClick={start}>Start</button>
       <button onClick={stop}>Stop</button>
     </div>

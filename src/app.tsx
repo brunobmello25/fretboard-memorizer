@@ -1,8 +1,9 @@
+import "./styles.css";
 import NoteGenerator from "./components/NoteGenerator";
 
 function App() {
   return (
-    <div>
+    <div id="app">
       <h1>Fretboard Memorizer</h1>
       <NoteGenerator />
     </div>
