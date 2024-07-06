@@ -1,4 +1,4 @@
-import { createSignal, onCleanup } from "solid-js";
+import { createSignal, onCleanup, createEffect } from "solid-js";
 
 interface MetronomeProps {
   bpm: number;
@@ -8,7 +8,7 @@ interface MetronomeProps {
 
 function Metronome({ bpm, onTick, onBpmChange }: MetronomeProps) {
   const [isRunning, setIsRunning] = createSignal(false);
-  let intervalId: NodeJS.Timeout;
+  let intervalId: NodeJS.Timeout | null = null;
 
   const beep = () => {
     const context = new (window.AudioContext ||
@@ -32,6 +32,7 @@ function Metronome({ bpm, onTick, onBpmChange }: MetronomeProps) {
   };
 
   const start = () => {
+    console.log({ bpm });
     if (!isRunning()) {
       setIsRunning(true);
       intervalId = setInterval(
@@ -45,20 +46,28 @@ function Metronome({ bpm, onTick, onBpmChange }: MetronomeProps) {
   };
 
   const stop = () => {
-    if (isRunning()) {
+    if (isRunning() && intervalId !== null) {
       clearInterval(intervalId);
+      intervalId = null;
       setIsRunning(false);
     }
   };
 
-  onCleanup(() => clearInterval(intervalId));
+  onCleanup(() => {
+    if (intervalId !== null) clearInterval(intervalId);
+  });
 
   return (
     <div>
       <input
         type="number"
         value={bpm}
-        onInput={(e) => onBpmChange(parseInt(e.currentTarget.value))}
+        onInput={(e) => {
+          const newBpm = parseInt(e.currentTarget.value || "0");
+          onBpmChange(newBpm);
+          console.log({ newBpm });
+          stop();
+        }}
         style={{ "font-size": "1.5em", margin: "10px", padding: "5px" }}
       />
       <button onClick={start}>Start</button>
