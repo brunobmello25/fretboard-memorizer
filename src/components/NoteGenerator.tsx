@@ -9,7 +9,6 @@ function getRandomNote() {
 
 function NoteGenerator() {
   const [note, setNote] = createSignal(getRandomNote());
-  const [bpm, setBpm] = createSignal(60);
 
   const generateNote = () => {
     setNote(getRandomNote());
@@ -18,7 +17,7 @@ function NoteGenerator() {
   return (
     <div style={{ "text-align": "center", "margin-top": "20px" }}>
       <h1 style={{ "font-size": "5em", margin: "20px" }}>{note()}</h1>
-      <Metronome bpm={bpm()} onTick={generateNote} onBpmChange={setBpm} />
+      <Metronome onTick={generateNote} />
     </div>
   );
 }

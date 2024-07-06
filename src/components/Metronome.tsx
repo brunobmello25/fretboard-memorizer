@@ -1,12 +1,11 @@
-import { createSignal, onCleanup, createEffect } from "solid-js";
+import { createSignal, onCleanup } from "solid-js";
 
 interface MetronomeProps {
-  bpm: number;
   onTick: () => void;
-  onBpmChange: (bpm: number) => void;
 }
 
-function Metronome({ bpm, onTick, onBpmChange }: MetronomeProps) {
+function Metronome({ onTick }: MetronomeProps) {
+  const [bpm, setBpm] = createSignal(60);
   const [isRunning, setIsRunning] = createSignal(false);
   let intervalId: NodeJS.Timeout | null = null;
 
@@ -40,7 +39,7 @@ function Metronome({ bpm, onTick, onBpmChange }: MetronomeProps) {
           beep();
           onTick();
         },
-        (60 / bpm) * 1000,
+        (60 / bpm()) * 1000,
       );
     }
   };
@@ -61,10 +60,10 @@ function Metronome({ bpm, onTick, onBpmChange }: MetronomeProps) {
     <div>
       <input
         type="number"
-        value={bpm}
+        value={bpm()}
         onInput={(e) => {
           const newBpm = parseInt(e.currentTarget.value || "0");
-          onBpmChange(newBpm);
+          setBpm(newBpm);
           console.log({ newBpm });
           stop();
         }}
